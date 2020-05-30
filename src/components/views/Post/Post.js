@@ -3,35 +3,51 @@ import PropTypes from 'prop-types';
 
 import clsx from 'clsx';
 
-// import { connect } from 'react-redux';
-// import { reduxSelector, reduxActionCreator } from '../../../redux/exampleRedux.js';
+import { connect } from 'react-redux';
+import { getById } from '../../../redux/postsRedux.js';
+import { initialState } from '../../../redux/initialState.js';
 
 import styles from './Post.module.scss';
+import Button from '@material-ui/core/Button';
 
-const Component = ({className, children}) => (
+const Component = ({className, postById}) => (
   <div className={clsx(className, styles.root)}>
     <h2>Post</h2>
-    {children}
+    {postById.map(post => {
+      return (
+        <div key={post.id}>
+          Date: {post.date}<br />
+          Actualization: {post.actualization}<br />
+          Title: {post.title}<br />
+          Content: {post.content}<br />
+          E-mail: {post.email}<br />
+          Photo: <img src={post.photo} alt="AddPhoto"></img><br />
+          Price: {post.price}<br />
+          Telephone: {post.telephone}<br />
+          Localization: {post.localization}<br />
+          {initialState.logged ? <a href={post.id + '/edit'}><Button variant="contained" color="primary">Edit</Button></a> : null}
+        </div>
+      );
+    })}
   </div>
 );
 
 Component.propTypes = {
-  children: PropTypes.node,
   className: PropTypes.string,
+  postById: PropTypes.array,
 };
 
-// const mapStateToProps = state => ({
-//   someProp: reduxSelector(state),
-// });
+const mapStateToProps = (state, props) => {
+  const id = props.match.params.id;
 
-// const mapDispatchToProps = dispatch => ({
-//   someAction: arg => dispatch(reduxActionCreator(arg)),
-// });
+  return {
+    postById: getById(state,id),
+  };
+};
 
-// const Container = connect(mapStateToProps, mapDispatchToProps)(Component);
+const Container = connect(mapStateToProps)(Component);
 
 export {
-  Component as Post,
-  // Container as Post,
+  Container as Post,
   Component as PostComponent,
 };

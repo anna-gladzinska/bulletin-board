@@ -1,11 +1,12 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
 import { createMuiTheme, StylesProvider, ThemeProvider } from '@material-ui/core/styles';
 import { CssBaseline } from '@material-ui/core';
 
 import { store } from './redux/store';
+import { initialState } from './redux/initialState.js';
 
 import { MainLayout } from './components/layout/MainLayout/MainLayout';
 import { Homepage } from './components/views/Homepage/Homepage';
@@ -29,9 +30,9 @@ const App = () => (
           <MainLayout>
             <Switch>
               <Route exact path='/' component={Homepage} />
-              <Route exact path='/post/add' component={PostAdd} />
+              <Route exact path='/post/add' component={PostAdd}> {initialState.logged ? <PostAdd /> : <Redirect to='/*' />}</Route>
               <Route exact path='/post/:id' component={Post} />
-              <Route exact path='/post/:id/edit' component={PostEdit} />
+              {initialState.logged ? <Route exact path='/post/:id/edit' component={PostEdit} /> : <Route path='*' component={NotFound} />}
               <Route path='*' component={NotFound} />
             </Switch>
           </MainLayout>

@@ -3,35 +3,26 @@ import PropTypes from 'prop-types';
 
 import clsx from 'clsx';
 
-// import { connect } from 'react-redux';
-// import { reduxSelector, reduxActionCreator } from '../../../redux/exampleRedux.js';
+import { initialState } from '../../../redux/initialState.js';
 
 import styles from './Header.module.scss';
+import Button from '@material-ui/core/Button';
 
-const Component = ({className, children}) => (
+const Component = ({className}) => (
   <div className={clsx(className, styles.root)}>
-    <h2>Header</h2>
-    {children}
+    <div className={styles.title}>Bulletin Board</div>
+    <div className={styles.links}>
+      <a href="/"><Button variant="contained" color="primary">Home</Button></a>
+      {initialState.logged ? <div className={styles.buttons}><a href="/post/:id"><Button variant="contained" color="primary">My Adds</Button></a><a href="http://google.com"><Button variant="contained" color="secondary">Log out</Button></a></div> : <a href="https://google.com"><Button variant="contained" color="primary">Login</Button></a>}
+    </div>
   </div>
 );
 
 Component.propTypes = {
-  children: PropTypes.node,
   className: PropTypes.string,
 };
 
-// const mapStateToProps = state => ({
-//   someProp: reduxSelector(state),
-// });
-
-// const mapDispatchToProps = dispatch => ({
-//   someAction: arg => dispatch(reduxActionCreator(arg)),
-// });
-
-// const Container = connect(mapStateToProps, mapDispatchToProps)(Component);
-
 export {
   Component as Header,
-  // Container as Header,
   Component as HeaderComponent,
 };

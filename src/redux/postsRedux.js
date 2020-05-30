@@ -1,5 +1,19 @@
 /* selectors */
+
 export const getAll = ({posts}) => posts.data;
+export const getById = ({posts}, id) => posts.data.filter(item => item.id === id);
+
+const compare = (a, b) => {
+  const keyA = new Date(a.date);
+  const keyB = new Date(b.date);
+
+  if (keyA > keyB) { return -1; }
+  if (keyA < keyB) {return 1; }
+
+  return 0;
+};
+
+export const getPostsByDate = ({ posts }) => posts.data.sort(compare);
 
 /* action name creator */
 const reducerName = 'posts';
