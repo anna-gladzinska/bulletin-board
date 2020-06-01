@@ -1,6 +1,8 @@
-/* selectors */
+import Axios from 'axios';
 
+/* selectors */
 export const getAll = ({posts}) => posts.data;
+export const getLoadingState = ({posts}) => posts.loading;
 export const getById = ({posts}, id) => posts.data.filter(item => item.id === id);
 
 const compare = (a, b) => {
@@ -13,7 +15,7 @@ const compare = (a, b) => {
   return 0;
 };
 
-export const getPostsByDate = ({ posts }) => posts.data.sort(compare);
+export const getPostsByDate = ({posts}) => posts.data.sort(compare);
 
 /* action name creator */
 const reducerName = 'posts';
@@ -30,6 +32,20 @@ export const fetchSuccess = payload => ({ payload, type: FETCH_SUCCESS });
 export const fetchError = payload => ({ payload, type: FETCH_ERROR });
 
 /* thunk creators */
+export const fetchPublished = () => {
+  return (dispatch, getState) => {
+    dispatch(fetchStarted());
+
+    Axios
+      .get('http://localhost:8000/api/posts')
+      .then(res => {
+        dispatch(fetchSuccess(res.data.filter(item => item.status === 'published')));
+      })
+      .catch(err => {
+        dispatch(fetchError(err.message || true));
+      });
+  };
+};
 
 /* reducer */
 export const reducer = (statePart = [], action = {}) => {
