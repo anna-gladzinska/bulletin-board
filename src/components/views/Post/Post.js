@@ -1,51 +1,82 @@
+/* eslint-disable linebreak-style */
 import React from 'react';
 import PropTypes from 'prop-types';
 
 import clsx from 'clsx';
 
 import { connect } from 'react-redux';
-import { getById } from '../../../redux/postsRedux.js';
+import { getAll, fetchPost, getLoadingState } from '../../../redux/postsRedux.js';
 import { initialState } from '../../../redux/initialState.js';
 
 import styles from './Post.module.scss';
 import Button from '@material-ui/core/Button';
 
-const Component = ({className, postById}) => (
-  <div className={clsx(className, styles.root)}>
-    <h2>Post</h2>
-    {postById.map(post => {
-      return (
-        <div key={post.id}>
-          Date: {post.date}<br />
-          Actualization: {post.actualization}<br />
-          Title: {post.title}<br />
-          Content: {post.content}<br />
-          E-mail: {post.email}<br />
-          Photo: <img src={post.photo} alt="AddPhoto"></img><br />
-          Price: {post.price}<br />
-          Telephone: {post.telephone}<br />
-          Localization: {post.localization}<br />
-          {initialState.logged ? <a href={post.id + '/edit'}><Button variant="contained" color="primary">Edit</Button></a> : null}
-        </div>
-      );
-    })}
-  </div>
-);
-
-Component.propTypes = {
+class Component extends React.Component {
+  
+static propTypes = {
   className: PropTypes.string,
-  postById: PropTypes.array,
+  posts: PropTypes.oneOfType([PropTypes.array,PropTypes.object]),
+  fetchPostById: PropTypes.func,
+  loading: PropTypes.shape({
+    active: PropTypes.bool,
+    error: PropTypes.oneOfType([PropTypes.bool,PropTypes.string]), 
+  }),
 };
 
-const mapStateToProps = (state, props) => {
-  const id = props.match.params.id;
+componentDidMount(){
+  const { fetchPostById } = this.props;
+  fetchPostById();
+}
 
-  return {
-    postById: getById(state,id),
-  };
-};
+render(){ 
+  const {className, loading: { active, error }, posts} = this.props;
 
-const Container = connect(mapStateToProps)(Component);
+  if(active || !posts){
+    return (
+      <div className={clsx(className, styles.root)}>
+        <h2>Posts</h2><br />
+        <p>Loading...</p>
+      </div>
+    );
+  } else if(error) {
+    return (
+      <div className={clsx(className, styles.root)}>
+        <h2>Post</h2>   
+        <p>Error! Details:</p>
+        <pre>{error}</pre>
+      </div>
+    );
+  } else {
+    return (
+      <div className={clsx(className, styles.root)}>
+        <h2>Post</h2>
+        Author: {posts.author}<br />
+        Created: {posts.created}<br />
+        Updated: {posts.updated}<br />
+        Status: {posts.status}<br />
+        Title: {posts.title}<br />
+        Text: {posts.text}<br />
+        Photo: <img src={posts.photo} alt="AddPhoto"></img><br />
+        Price: {posts.price}<br />
+        Phone: {posts.phone}<br />
+        Location: {posts.location}<br />
+        {initialState.logged ? <a href={posts._id + '/edit'}><Button variant="contained" color="primary">Edit</Button></a> : null}
+      </div>
+    );
+  }
+}
+}
+
+const mapStateToProps = state => ({
+  posts: getAll(state),
+  loading: getLoadingState(state),
+});
+
+const mapDispatchToProps = (dispatch, props) => ({
+  fetchPostById: (id=props.match.params.id) => dispatch(fetchPost(id)),
+});
+
+const Container = connect(mapStateToProps, mapDispatchToProps)(Component);
 
 export {
   Container as Post,
