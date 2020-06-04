@@ -1,6 +1,6 @@
 /* eslint-disable linebreak-style */
 export const initialState = {
-  logged: false,
+  logged: true,
   posts: {
     data: {},
     loading: {
