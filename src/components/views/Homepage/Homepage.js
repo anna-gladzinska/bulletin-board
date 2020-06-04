@@ -58,7 +58,7 @@ render(){
         </div>        
         {posts.map(post => {
           return (
-            <div key={post.id}>
+            <div key={post._id}>
               <a href={'post/'+ post._id}>{post.title} ({post.created})</a><br />
             </div>
           );

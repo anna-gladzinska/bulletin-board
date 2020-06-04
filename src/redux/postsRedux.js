@@ -47,6 +47,21 @@ export const fetchPublished = () => {
   };
 };
 
+export const fetchPost = (id) => {
+  return (dispatch, getState) => {
+    dispatch(fetchStarted(id));
+
+    Axios
+      .get(`http://localhost:8000/api/posts/${id}`)
+      .then(res => {
+        dispatch(fetchSuccess(res.data));
+      })
+      .catch(err => {
+        dispatch(fetchError(err.message || true));
+      });
+  };
+};
+
 /* reducer */
 export const reducer = (statePart = [], action = {}) => {
   switch (action.type) {
